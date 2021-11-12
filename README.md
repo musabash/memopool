@@ -1,2 +1,2 @@
 # memopool
-A memory sharing app
+A memory sharing app (Full Stack MERN Project)
