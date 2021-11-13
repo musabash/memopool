@@ -10,11 +10,14 @@ export const getPosts = () => async (dispatch) => {
   }
 }
 
-export const createPost = (post) => async (dispatch) => {
+export const createPost = (post, reset) => async (dispatch) => {
 
   try {
-    const { data } = await api.createPost(post);
-    dispatch({ type: 'CREATE', payload: data });
+    const res = await api.createPost(post);
+    dispatch({ type: 'CREATE', payload: res.data });
+    if (res.status === 201) {
+      reset();
+    } 
   } catch (error) {
     console.log(error.message);
   }

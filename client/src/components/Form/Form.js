@@ -10,20 +10,20 @@ import { createPost } from '../../actions/posts';
 const validationSchema = yup.object({
   creator: yup
     .string('Creator')
-    .min(3, 'Creator name should be of minimum 3 characters length')
+    .min(3, 'Too short')
     .required('Creator name is required'),
   title: yup
     .string('Title')
-    .min(3, 'Title should be of minimum 8 characters length')
+    .min(3, 'Too short')
     .required('Title is required'),
   message: yup
     .string('Message')
-    .min(8, 'Message should be of minimum 8 characters length')
+    .min(8, 'Too short')
     .required('Message is required'),
   tags: yup
     .string('Tags')
-    .min(3, 'Tags should be of minimum 3 characters length')
-    .required('Password is required'),
+    .min(3, 'Too short')
+    .required('At least one tag is required'),
   selectedFile: yup
     .string('File')
 });
@@ -39,8 +39,8 @@ const Form = () => {
       selectedFile: '',
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      dispatch(createPost(values));
+    onSubmit: async (values) => {
+      dispatch(createPost(values, formik.resetForm));
     },
   });
   
@@ -60,6 +60,7 @@ const Form = () => {
     fullWidth: true,
     value: formik.values[name],
     onChange: formik.handleChange,
+    onBlur: formik.handleBlur,
     error: formik.touched[name] && Boolean(formik.errors[name]),
     helperText: formik.touched[name] && formik.errors[name]
   });
@@ -85,8 +86,9 @@ const Form = () => {
           size="large" 
           fullWidth
           type="submit"
+          disabled={!formik.dirty || !formik.isValid || formik.isSubmitting}
         >
-          Submit
+          {formik.isSubmitting ? "posting..." : "Post Memo"}
         </Button>
       </form>
     </Paper>
