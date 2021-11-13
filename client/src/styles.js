@@ -8,11 +8,13 @@ export default makeStyles(() => ({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingBottom: '1em',
   },
   heading: {
     color: 'rgba(0,183,255, 1)',
   },
   image: {
     marginLeft: '15px',
+    transform: 'rotate(-10deg)',
   },
 }));

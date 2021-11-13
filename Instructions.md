@@ -162,3 +162,10 @@ export default App
 
 34. src klasörü içinde 
 
+35. Redux: Uygulamanın bütün state management'ı bunun üzerinden olur.
+index.js içinde createStore() kullanarak store objecti tanımlanır. createStore argüman olarak reducer alır. Ayrıca asenkron işlemler için compose(applyMiddleware(thunk)) argümanını da ekliyoruz. Bunları kullanabilmek için şunları import etmek lazım:
+import { createStore, applyMiddleware, compose} from 'redux';
+import thunk from 'redux-thunk';
+import reducers from './reducers'
+Ayrıca tüm bileşenlerin state'e erişebilmesi için index.js içinde react-redux'tan import edilen provider ile wrap yapıyoruz tüm bileşenleri.
+import { Provider } from 'react-redux';
