@@ -1,0 +1,1 @@
+export const updateAppState = (obj) => ({type: 'UPDATE_STATE', payload: obj});

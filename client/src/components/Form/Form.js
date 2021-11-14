@@ -1,36 +1,43 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import useStyles from './styles';
 import { TextField, Button, Typography, Paper } from '@material-ui/core';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import FileBase from 'react-file-base64';
-import { useDispatch} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createPost } from '../../actions/posts';
+import { updateAppState } from '../../actions/appState';
 
 const validationSchema = yup.object({
   creator: yup
-    .string('Creator')
-    .min(3, 'Too short')
-    .required('Creator name is required'),
+  .string('Creator')
+  .min(3, 'Too short')
+  .required('Creator name is required'),
   title: yup
-    .string('Title')
-    .min(3, 'Too short')
-    .required('Title is required'),
+  .string('Title')
+  .min(3, 'Too short')
+  .required('Title is required'),
   message: yup
-    .string('Message')
-    .min(8, 'Too short')
-    .required('Message is required'),
+  .string('Message')
+  .min(8, 'Too short')
+  .required('Message is required'),
   tags: yup
-    .string('Tags')
-    .min(3, 'Too short')
-    .required('At least one tag is required'),
+  .string('Tags')
+  .min(3, 'Too short')
+  .required('At least one tag is required'),
   selectedFile: yup
-    .string('File')
+  .string('File')
 });
 
 
 const Form = () => {
-  const formik = useFormik({
+  const activeId = useSelector((state) => state.appState.activeId);
+  const post = useSelector((state) => activeId ? state.posts.find(post => post._id === activeId) : null)
+  
+    const classes = useStyles();
+    const dispatch = useDispatch();
+    
+    const formik = useFormik({
     initialValues: {
       creator: '', 
       title: '', 
@@ -43,13 +50,20 @@ const Form = () => {
       dispatch(createPost(values, formik.resetForm));
     },
   });
-  
-  const classes = useStyles();
-  const dispatch = useDispatch();
 
   const handleOnDone = ({base64}) => {
     formik.setValues({...formik.values, selectedFile: base64})
+    console.log(activeId);
   };
+
+  const handleClearForm = () => {
+    dispatch(updateAppState({activeId: null}));
+    formik.resetForm();
+  }
+
+  useEffect(() => {
+    activeId && formik.setValues(post);
+  }, [activeId])
 
   const textFieldProps = (name) => ({
     name: name,
@@ -87,7 +101,17 @@ const Form = () => {
           type="submit"
           disabled={!formik.dirty || !formik.isValid || formik.isSubmitting}
         >
-          {formik.isSubmitting ? "posting..." : "Post Memo"}
+          {formik.isSubmitting ? "posting..." : activeId ? "Update Memo" : "Post Memo"}
+        </Button>
+        <Button 
+          variant="contained" 
+          color="secondary" 
+          size="small" 
+          fullWidth
+          type="button"
+          onClick={handleClearForm}
+        >
+          Clear
         </Button>
       </form>
     </Paper>
