@@ -49,7 +49,6 @@ const Form = () => {
 
   const handleOnDone = ({base64}) => {
     formik.setValues({...formik.values, selectedFile: base64})
-    console.log(formik)
   };
 
   const textFieldProps = (name) => ({
