@@ -5,7 +5,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import FileBase from 'react-file-base64';
 import { useDispatch, useSelector } from 'react-redux';
-import { createPost } from '../../actions/posts';
+import { createPost, updatePost } from '../../actions/posts';
 import { updateAppState } from '../../actions/appState';
 
 const validationSchema = yup.object({
@@ -20,6 +20,7 @@ const validationSchema = yup.object({
   message: yup
   .string('Message')
   .min(8, 'Too short')
+  .max(33, 'Too long')
   .required('Message is required'),
   tags: yup
   .string('Tags')
@@ -47,13 +48,13 @@ const Form = () => {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      dispatch(createPost(values, formik.resetForm));
+      activeId ? dispatch(updatePost(activeId, values, formik.resetForm)) : dispatch(createPost(values, formik.resetForm));
     },
   });
 
   const handleOnDone = ({base64}) => {
     formik.setValues({...formik.values, selectedFile: base64})
-    console.log(activeId);
+    console.log(formik);
   };
 
   const handleClearForm = () => {
@@ -63,7 +64,7 @@ const Form = () => {
 
   useEffect(() => {
     activeId && formik.setValues(post);
-  }, [activeId])
+  }, [post, activeId])
 
   const textFieldProps = (name) => ({
     name: name,
@@ -81,7 +82,7 @@ const Form = () => {
   return (
     <Paper className={classes.paper}>
       <form onSubmit={formik.handleSubmit} className={`${classes.root} ${classes.form}`} autoComplete="off" noValidate >
-        <Typography variant="h6">Create a Memo</Typography>
+        <Typography variant="h6">{`${activeId ? "Edit" : "Create a "} Memo`}</Typography>
         <TextField {...textFieldProps("creator")} />
         <TextField {...textFieldProps("title")} />
         <TextField {...textFieldProps("message")} />
