@@ -34,6 +34,7 @@ const validationSchema = yup.object({
 const Form = () => {
   const activeId = useSelector((state) => state.appState.activeId);
   const post = useSelector((state) => activeId ? state.posts.find(post => post._id === activeId) : null)
+  const posts = useSelector((state) => state.posts);
   
     const classes = useStyles();
     const dispatch = useDispatch();
@@ -54,7 +55,6 @@ const Form = () => {
 
   const handleOnDone = ({base64}) => {
     formik.setValues({...formik.values, selectedFile: base64})
-    console.log(formik);
   };
 
   const handleClearForm = () => {
